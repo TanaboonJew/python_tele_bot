@@ -11,7 +11,7 @@ client = TelegramClient('session_name', config.api_id, config.api_hash)
 
 # Helper function to create log file path
 def get_log_file_path(group_name):
-    date_str = datetime.now().strftime('%Y-%m-%d')
+    date_str = datetime.now().strftime('%Y-%m')
     log_file_name = f"log_{group_name}_{date_str}.log"
     return log_file_name
 
@@ -19,12 +19,18 @@ def get_log_file_path(group_name):
 @client.on(events.NewMessage)
 async def handler(event):
     message_text = event.message.message
-    if re.search(r'\bthailand\b', message_text, re.IGNORECASE):
+    if any(re.search(rf'\b{name}\b', message_text, re.IGNORECASE) for name in config.thailand_names):
         sender = await event.get_sender()
         chat = await event.get_chat()
         group_name = chat.username or chat.title.replace(' ', '_')
         log_file_path = get_log_file_path(group_name)
-        log_entry = f"Message from {sender.username}: {message_text}\n"
+        log_entry = f"""Message in {group_name} from {sender.username} @ {datetime.now().strftime("%d-%m-%Y %H:%M:%S")}:
+        
+\"\"\"
+{message_text}
+\"\"\"
+
+"""
         
         # Log the message to the respective log file
         with open(log_file_path, 'a', encoding='utf-8') as log_file:

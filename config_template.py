@@ -10,3 +10,9 @@ groups = [
     't.me/group3',
     't.me/group4',
 ]
+
+thailand_names = [
+    'thailand',
+    'Thai',
+    'th'
+]
